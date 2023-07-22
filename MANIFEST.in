@@ -1,0 +1,4 @@
+include src/pcbmode/stackups/*.json
+include src/pcbmode/styles/*/*.json
+include src/pcbmode/config/pcbmode_config.json
+include src/pcbmode/fonts/*.svg

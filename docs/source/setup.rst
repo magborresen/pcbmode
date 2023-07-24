@@ -2,7 +2,7 @@
 Setup
 #####
 
-We test *PCBmodE* with Python 3.7 under Linux, but it may or may not
+We test *PCBmodE* with Python 3.7 under Linux & MacOS, but it may or may not
 work on other operating systems.
 
 It comes in the form of a installable tool called ``pcbmode`` which is

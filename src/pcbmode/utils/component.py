@@ -36,7 +36,13 @@ class Component:
 
     def __init__(self, refdef, comp_dict, comp_type):
         """
-        'comp_type': used to determine where to look for the footprint
+        Args:
+            refdef (str): Reference name for the component being processed
+            comp_dict (dict): The dictionary defining the component from the project file
+            comp_type (str): used to determine where to look for the footprint
+
+        Returns:
+            no value
         """
         self._refdef = refdef
         self._layer = comp_dict.get("layer", "top")
@@ -168,18 +174,33 @@ class Component:
         self._footprint_shapes = footprint_shapes
 
     def get_shapes(self):
+        """
+            Returns footprint shapes
+        """
         return self._footprint_shapes
 
     def get_location(self):
+        """
+            Returns component location
+        """
         return self._location
 
     def get_refdef(self):
+        """
+            Returns the reference definition of the component ex. "R12"
+        """
         return self._refdef
 
     def get_placement_layer(self):
+        """
+            Returns the layer of placement for the component
+        """
         return self._layer
 
     def getFootprintName(self):
+        """
+            Returns the name of the footprint the component is accosiated with
+        """
         return self._footprint_name
 
     def get_rotate(self):

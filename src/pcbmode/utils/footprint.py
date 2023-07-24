@@ -156,7 +156,7 @@ class Footprint:
             # We need to create a copy of the dictionary since we will modify it
             # differently depending on the sheet
             s_d_c = copy.deepcopy(s_d)  # (s)hape_(d)ict_(c)opy
-
+            
             # Look for a shape dict definition for the specific sheet
             s_l = s_d_c.get(sheet, None)  # (s)hape_(l)ist
 

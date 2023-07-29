@@ -31,6 +31,16 @@ from pcbmode.utils.point import Point
 
 def place_index(layers, width, height):
     """
+    Places a layer index next to the canves for each of the layers defined in PCBModE.
+    The indexes are placed directely into the SVG file when the build command is run.
+
+    Args:
+        layers (dict): Dictionary containing all the layer information.
+        width (float): Float defining the width of the canvas.
+        height (float): Float defining the height of the canvas.
+
+    Returns:
+        no value
     """
 
     ns_pcm = config.cfg["ns"]["pcbmode"]

@@ -136,7 +136,16 @@ class Module:
         )
 
     def _get_comp_objs(self, comps_dict, comp_type):
-        """ Returna a list of Component objects """
+        """ 
+        Return a list of Component objects 
+
+        Args:
+            comps_dict (dict): Dictionary of components from the board.json file
+            comp_type (str): Component type used to determine where to look for the footprint
+        
+        Returns:
+            comp_objs (list): List of Component() objects.
+        """
         comp_objs = []
         for refdef in comps_dict:
             comp_dict = comps_dict[refdef]
@@ -150,6 +159,11 @@ class Module:
     def _get_outline_shape(self):
         """
         Get the (optional) module's outline.
+
+        Args:
+            no value
+        Returns:
+            no value
         """
         shape = None
         outline_dict = self._module_dict.get("outline", None)

@@ -143,8 +143,12 @@ class Footprint:
         """
         Add soldermask and solderpaste to pin pad shape
 
-        'layer': the layer onto which to add the shapes 
-        's_d': the shape's dictionary
+        Args:
+            layer (str): The layer onto which to add the shapes 
+            s_d (dict): the shape's dictionary
+
+        Returns:
+            no value
         """
 
         # Add modified shapes basied on the 's_d' prototype to the following sheets
@@ -156,7 +160,7 @@ class Footprint:
             # We need to create a copy of the dictionary since we will modify it
             # differently depending on the sheet
             s_d_c = copy.deepcopy(s_d)  # (s)hape_(d)ict_(c)opy
-            
+
             # Look for a shape dict definition for the specific sheet
             s_l = s_d_c.get(sheet, None)  # (s)hape_(l)ist
 

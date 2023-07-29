@@ -18,6 +18,7 @@
 
 
 import json
+import os
 import argparse
 
 from pathlib import Path
@@ -39,8 +40,14 @@ from pcbmode.utils.board import Board
 
 def load_pcbmode_config():
     """
-    Load the default configuration.  If a local 'pcbmode_config'
-    exists in 'config/' then override the settings in there.
+    Load the default configuration.  If a project 'pcbmode_config'
+    exists in 'config/' then override the settings from there.
+
+    Args:
+        no value
+
+    Returns:
+        no value
     """
     config_path = "config"
     config_filename = "pcbmode_config.json"
@@ -48,7 +55,7 @@ def load_pcbmode_config():
     config_file = config.tmp["pcbmode-path"] / config_path / config_filename
     config.cfg = utils.dictFromJsonFile(config_file)
 
-    # Override with local settings, if any
+    # Override with project settings, if any
     project_config_file = config.tmp["project-path"] / config_path / config_filename
     if project_config_file.exists():
         project_config = utils.dictFromJsonFile(project_config_file)
@@ -59,9 +66,15 @@ def load_pcbmode_config():
 def load_board_file():
     """
     Load the board's configuration data
+
+    Args:
+        no value
+
+    Returns:
+        no value
     """
 
-    filename = config.tmp["project-path"] / config.tmp["project-file"]
+    filename = os.path.join(config.tmp["project-path"], config.tmp["project-file"])
     config.brd = utils.dictFromJsonFile(filename)
 
 
@@ -115,6 +128,13 @@ def load_cache():
 
 def load_routing():
     """
+    Loads the default routing file of the board into the config file.
+
+    Args:
+        no value
+
+    Returns:
+        no value    
     """
     filename = Path(
         config.tmp["project-path"]
@@ -179,7 +199,6 @@ def main():
     load_board_file()
     load_stylesheet()
     load_stackup()
-    load_routing()
     set_y_axis_invert()
     apply_overrides(cmdline_args)
 
@@ -188,7 +207,7 @@ def main():
         extract.extract(
             extract=cmdline_args.extract, extract_refdefs=cmdline_args.extract_refdefs
         )
-
+    
     # Renumber refdefs and dump board config file
     elif cmdline_args.renumber is not False:
         if cmdline_args.renumber is None:
@@ -206,7 +225,7 @@ def main():
         coord_file.makeCoordFile(cmdline_args.coord_file)
 
     else:
-
+        load_routing()
         # Load the cache file
         if cmdline_args.no_cache is False:
             load_cache()

@@ -55,6 +55,12 @@ class Shape:
     def _process_shape_dict(self, sd):
         """ 
         Read in parameters and set defaults
+
+        Args:
+            sd (dict): Dict defining the shape currently in process
+
+        Returns:
+            sd (dict): Processed shape dict
         """
         sd["label"] = sd.get("label", None)
         sd["label_style_class"] = sd.get("label-style-class", None)

@@ -8,7 +8,7 @@ a ``path`` type looks like:
 
     {
       "type": "path", 
-      "layers": ["top, "bottom"], 
+      "layers": ["top", "bottom"], 
       "location": [3.1, -5.667],
       "style": "stroke-width:1.2;", 
       "d": "m -48.3,0 0,-5.75 c 0,-1.104569 0.895431,-2 2,-2 0,0 11.530272,-0.555504 17.300001,-0.5644445 10.235557,-0.015861 20.4577816,0.925558 30.6933324,0.9062128 C 10.767237,-7.4253814 19.826085,-8.3105055 28.900004,-8.3144445 34.703053,-8.3169636 46.3,-7.75 46.3,-7.75 c 1.103988,0.035813 2,0.895431 2,2 l 0,5.75 0,5.75 c 0,1.104569 -0.895431,2 -2,2 0,0 -11.596947,0.5669636 -17.399996,0.5644445 C 19.826085,8.3105055 10.767237,7.4253814 1.6933334,7.4082317 -8.5422174,7.3888865 -18.764442,8.3303051 -28.999999,8.3144445 -34.769728,8.305504 -46.3,7.75 -46.3,7.75 c -1.103982,-0.036019 -2,-0.895431 -2,-2 l 0,-5.75"
@@ -48,7 +48,9 @@ Location is defined as an ``x``, ``y`` coordinate
 
 .. code-block:: json
 
-     "location": [<x>m <y>]
+    {
+      "location": ["x", "y"]
+    }
 
 The location definition is relative to the hierarchy. So if you're defining a pad, the
 location is relative to the footprint's center.
@@ -62,7 +64,9 @@ A list of which layers to put the shape in
 
 .. code-block:: json
 
-     "layers": ["top", "bottom"]
+    {
+      "layers": ["top", "bottom"]
+    }
 
 Even if the shape is placed in a single layer, it needs to be defined as a list
 

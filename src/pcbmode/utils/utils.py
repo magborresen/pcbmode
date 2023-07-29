@@ -26,6 +26,7 @@ import math
 from operator import itemgetter  # for sorting lists by dict value
 import html.parser as HTMLParser
 import hashlib
+from lxml import etree as et
 
 from pcbmode.config import config
 from pcbmode.utils import css_utils
@@ -456,8 +457,8 @@ def get_text_params(font_size, letter_spacing, line_height):
     try:
         font_size, font_size_unit = parse_dimension(font_size)
     except:
-        throw(
-            "There's a problem parsing the 'font-size'. It's most likely missing. The format should be an integer or float followed by 'mm' (the only unit supported). For example, '0.3mm' or '2 mm' should work. Of course, it needs to be a positive figure."
+        msg.error(
+            f"There's a problem parsing the 'font-size'. It's most likely missing. The format should be an integer or float followed by 'mm' (the only unit supported). For example, '0.3mm' or '2 mm' should work. Of course, it needs to be a positive figure."
         )
 
     if font_size_unit == None:
@@ -508,7 +509,7 @@ def textToPath(font_data, text, letter_spacing, line_height, scale_factor):
     try:
         text = re.findall(r"(\&#x[0-9abcdef]*;|.|\n)", text)
     except:
-        throw(
+        msg.error(
             f"There's a problem parsing the text '{text}'. Unicode and \\n newline should be fine, by the way."
         )
 
@@ -532,7 +533,7 @@ def textToPath(font_data, text, letter_spacing, line_height, scale_factor):
                 f'//n:glyph[@unicode="{symbol}"]', namespaces={"n": ns_svg},
             )
             if glyph == None:
-                utils.throw(
+                msg.info(
                     f"There's no glyph definition for '{symbol}' in the '{font}' font."
                 )
             else:
@@ -572,12 +573,28 @@ def digest(string):
     digits = config.cfg["params"]["num-of-digest-digits"]
     return hashlib.md5(string.encode()).hexdigest()[: digits - 1]
 
+def toPoint(coord=[0, 0]):
+    """
+    Takes a coordinate in the form of [x,y] and
+    returns a Point type
+    """
+    if coord == None:
+        return None
+    else:
+        return Point(coord)
 
 def pn(num_in, sd=None):
     """
     Create a pretty number from a float.
     'round()' returns '0.0' and that's ugly. So this takes care of that.
     If the amount of digits isn't defined then use the global settings. 
+
+    Args:
+        num_in (float): Floating point number to prettify.
+        sd (int): Number of significant digits. Will default to config if not given.
+    
+    Returns:
+        num (float/int): Returns a float if the prettyfication has not made the number equal to an int.
     """
     if sd is None:
         num = round(num_in, config.cfg["params"]["significant-digits"])
@@ -589,7 +606,13 @@ def pn(num_in, sd=None):
 
 def parseTransform(transform):
     """
-    Returns a Point() for the input transform
+    Returns a Point object for the input transform.
+
+    Args:
+        transform (str): Which transform to parse. Will default to translaste if None.
+
+    Returns:
+        data (dict): Data dict with type and location.
     """
     data = {}
 
@@ -606,7 +629,7 @@ def parseTransform(transform):
             y = coord.group("y")
         else:
             y = 0
-        data["location"] = Point(x, y)
+        data["location"] = Point([x, y])
     elif "matrix" in transform.lower():
         data["type"] = "matrix"
         data["location"], data["rotate"], data["scale"] = parseSvgMatrix(transform)
@@ -700,3 +723,19 @@ def process_style(style):
                 new_style += add_if_stroke
 
     return new_style
+
+
+def saveBrdConfig():
+    """
+    Save 
+    """
+
+    filename = os.path.join(
+        config.tmp["project-path"],
+        config.tmp["project-file"]
+    )
+    try:
+        with open(filename, "w") as f:
+            f.write(json.dumps(config.brd, sort_keys=True, indent=2))
+    except:
+        msg.error("Cannot save file %s" % filename)

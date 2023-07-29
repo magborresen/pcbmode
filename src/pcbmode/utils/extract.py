@@ -29,6 +29,15 @@ from pcbmode.utils.point import Point
 
 def extract(extract, extract_refdefs):
     """
+    Extracts changes from the SVG file and saves them into the board.json file
+    as well as the routing file.
+
+    Args:
+        extract (bool): Whether to extract component, routing, and information from the SVG
+        extract_refdefs (bool): Whether to reference definitions from the SVG file
+
+    Returns:
+        no value
     """
 
     svg_in = utils.open_board_svg()
@@ -50,6 +59,14 @@ def extract(extract, extract_refdefs):
 
 def extractComponents(svg_in):
     """
+    Extracts components from the SVG file and stores stores them in the configuration.
+    Also dumps them into the configuration JSON file.
+
+    Args:
+        svg_in (ElementTree): The ElementTree object of the input SVG
+
+    Returns:
+        no value
     """
 
     xpath_expr_place = '//svg:g[@pcbmode:pcb-layer="%s"]//svg:g[@pcbmode:sheet="placement"]//svg:g[@pcbmode:type="%s"]'
@@ -89,17 +106,17 @@ def extractComponents(svg_in):
             # Ignore location extraction when parsing 'rotate'
             if transform_data["type"] != "rotate":
                 new_location = transform_data["location"]
-                old_location = utils.toPoint(comp_dict.get("location") or [0, 0])
+                old_location = utils.toPoint(comp_dict.get("location", [0, 0]))
 
                 # Invert 'y' coordinate
                 new_location.y *= config.cfg["iya"]
 
                 # Change component location if needed
                 if new_location != old_location:
-                    x1 = utils.niceFloat(old_location.x)
-                    y1 = utils.niceFloat(old_location.y)
-                    x2 = utils.niceFloat(new_location.x)
-                    y2 = utils.niceFloat(new_location.y)
+                    x1 = utils.pn(old_location.x)
+                    y1 = utils.pn(old_location.y)
+                    x2 = utils.pn(new_location.x)
+                    y2 = utils.pn(new_location.y)
                     msg.subInfo(
                         "%s has moved from [%s,%s] to [%s,%s]"
                         % (refdef, x1, y2, x2, y2)
@@ -111,7 +128,7 @@ def extractComponents(svg_in):
             if transform_data["type"] in ["rotate", "matrix"]:
                 old_rotate = comp_dict.get("rotate") or 0
                 new_rotate = transform_data["rotate"]
-                comp_dict["rotate"] = utils.niceFloat((old_rotate + new_rotate) % 360)
+                comp_dict["rotate"] = utils.pn((old_rotate + new_rotate) % 360)
                 msg.subInfo(
                     "Component %s rotated from %s to %s"
                     % (refdef, old_rotate, comp_dict["rotate"])
@@ -119,16 +136,8 @@ def extractComponents(svg_in):
 
     # Save board config to file (everything is saved, not only the
     # component data)
-    filename = os.path.join(
-        config.cfg["locations"]["boards"],
-        config.cfg["name"],
-        config.cfg["name"] + ".json",
-    )
-    try:
-        with open(filename, "wb") as f:
-            f.write(json.dumps(config.brd, sort_keys=True, indent=2))
-    except:
-        msg.error("Cannot save file %s" % filename)
+
+    utils.saveBrdConfig()
 
     return
 
@@ -197,22 +206,13 @@ def extractRefdefs(svg_in):
             except:
                 refdef_dict["silkscreen"]["refdef"] = {}
 
-            x = utils.niceFloat(loc_new.x)
-            y = utils.niceFloat(loc_new.y)
+            x = utils.pn(loc_new.x)
+            y = utils.pn(loc_new.y)
             refdef_dict["silkscreen"]["refdef"]["location"] = [x, y]
 
     # Save board config to file (everything is saved, not only the
     # component data)
-    filename = os.path.join(
-        config.cfg["locations"]["boards"],
-        config.cfg["name"],
-        config.cfg["name"] + ".json",
-    )
-    try:
-        with open(filename, "wb") as f:
-            f.write(json.dumps(config.brd, sort_keys=True, indent=2))
-    except:
-        msg.error("Cannot save file %s" % filename)
+    utils.saveBrdConfig()
 
     return
 
@@ -227,8 +227,9 @@ def extractRouting(svg_in):
     # for stats displayed as PCBmodE is run. The file is then
     # overwritten.
     output_file = os.path.join(
-        config.cfg["base-dir"], config.cfg["name"] + "_routing.json"
+        config.tmp["project-path"], config.brd["project-params"]["input"]["routing-file"]
     )
+
     try:
         routing_dict_old = utils.dictFromJsonFile(output_file, False)
     except:
@@ -366,7 +367,7 @@ def extractRouting(svg_in):
             # Change component rotation if needed
             if transform_data["type"] == "matrix":
                 rotate = transform_data["rotate"]
-                rotate = utils.niceFloat((rotate) % 360)
+                rotate = utils.pn((rotate) % 360)
             else:
                 rotate = 0
 
@@ -379,8 +380,8 @@ def extractRouting(svg_in):
                 "{" + config.cfg["ns"]["pcbmode"] + "}footprint"
             )
             vias_dict[digest]["location"] = [
-                utils.niceFloat(location.x),
-                utils.niceFloat(location.y),
+                utils.pn(location.x),
+                utils.pn(location.y),
             ]
             vias_dict[digest]["layer"] = pcb_layer
             vias_dict[digest]["silkscreen"] = {"refdef": {"show": False}}
@@ -413,7 +414,7 @@ def extractRouting(svg_in):
 
     # Save extracted routing into routing file
     try:
-        with open(output_file, "wb") as f:
+        with open(output_file, "w") as f:
             f.write(json.dumps(routing_dict, sort_keys=True, indent=2))
     except:
         msg.error("Cannot save file %s" % output_file)
@@ -477,13 +478,4 @@ def extractDocs(svg_in):
 
     # Save board config to file (everything is saved, not only the
     # component data)
-    filename = os.path.join(
-        config.cfg["locations"]["boards"],
-        config.cfg["name"],
-        config.cfg["name"] + ".json",
-    )
-    try:
-        with open(filename, "wb") as f:
-            f.write(json.dumps(config.brd, sort_keys=True, indent=2))
-    except:
-        msg.error("Cannot save file %s" % filename)
+    utils.saveBrdConfig()

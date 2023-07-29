@@ -8,8 +8,9 @@ Contents:
    :maxdepth: 2
 
    introduction
-   workflow
    setup
+   workflow
+   the-board-file
    style
    components
    shapes
@@ -17,7 +18,6 @@ Contents:
    text
    routing
    extraction
-   layer-polarity
    layer-control
 
 

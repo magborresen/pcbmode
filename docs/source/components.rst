@@ -264,7 +264,7 @@ layout shapes
 
 
 
-
+.. _placing-components:
 Placing components and shapes
 =============================
 

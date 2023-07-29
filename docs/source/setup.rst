@@ -1,3 +1,4 @@
+.. _setup:
 #####
 Setup
 #####
@@ -158,6 +159,8 @@ So here's one way to organise the build environment
                     my-board/                # a PCB project
                       my-board.json
                       my-board_routing.json
+                      config/
+                        pcbmode_config.json
                       components/
                       shapes/
                       docs/

@@ -2,10 +2,10 @@
 Workflow
 ########
 
-*PCBmodE* is a script that uses Inkscaoe as a graphical interface. So
+*PCBmodE* is a Python script that uses Inkscape as a graphical interface. So
  you can think of *PCBmodE* as a wrapper around Inkscape.
 
-To get a feel for how to work with *PCBmodE*, here's a typical design workflow:
+To get a feel for how to work with *PCBmodE*, here's a typical design workflow that is used after the initial :ref:`setup`:
 
 1) Edit JSON files with a text editor for adding components, placing them, etc.
 2) Run *PCBmodE* to generate the board's Inkscape SVG
